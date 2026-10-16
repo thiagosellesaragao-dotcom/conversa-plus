@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversa+</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0d12;color:#f4f4f5;font-family:Arial,sans-serif}
+header{padding:20px;background:#121620;border-bottom:1px solid #292e3a}
+header h1{margin:0;color:#a78bfa}
+header p{color:#a1a1aa;margin-bottom:0}
+main{max-width:650px;margin:auto;padding:18px}
+.panel{background:#121620;border:1px solid #292e3a;border-radius:15px;padding:16px;margin-bottom:16px}
+label{display:block;margin:12px 0 7px;color:#c4b5fd}
+select,input,button{width:100%;padding:13px;border-radius:9px;border:1px solid #343948;background:#1b202c;color:white;font-size:15px}
+button{background:#8b5cf6;border:0;font-weight:bold;margin-top:12px;cursor:pointer}
+#chat{height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.msg{padding:11px 13px;border-radius:12px;max-width:88%;line-height:1.45;overflow-wrap:anywhere}
+.bot{background:#252b39;align-self:flex-start}
+.me{background:#6d45c0;align-self:flex-end}
+small{color:#a1a1aa}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:#1b202c;padding:12px 4px;border-radius:10px}
+.stats strong{display:block;color:#c4b5fd;font-size:21px;margin-bottom:5px}
+#feedback{color:#d4d4d8;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+<h1>Conversa+</h1>
+<p>Pratique conversas. Evolua no seu ritmo.</p>
+</header>
+<main>
+<section class="panel">
+<h3>Configure sua prática</h3>
+<label for="style">Personalidade da pessoa</label>
+<select id="style">
+<option value="tímida">Tímida</option>
+<option value="engraçada">Engraçada</option>
+<option value="tranquila">Tranquila</option>
+<option value="extrovertida">Extrovertida</option>
+</select>
+<label for="scene">Situação</label>
+<select id="scene">
+<option>Conhecendo alguém na escola</option>
+<option>Começando uma conversa por mensagem</option>
+<option>Conversando com uma amiga</option>
+<option>Retomando uma conversa</option>
+</select>
+<button onclick="start()">Começar conversa</button>
+</section>
+<section class="panel">
+<div id="chat">
+<div class="msg bot">Oi! Vamos conversar? 😊</div>
+</div>
+<form id="form">
+<input id="message" placeholder="Escreva sua mensagem..." maxlength="500" autocomplete="off">
+<button type="submit">Enviar mensagem</button>
+</form>
+</section>
+<section class="panel">
+<h3>Seu desempenho</h3>
+<div class="stats">
+<div><strong id="count">0</strong><small>Mensagens</small></div>
+<div><strong id="score">—</strong><small>Clareza</small></div>
+<div><strong id="streak">0</strong><small>Sequência</small></div>
+</div>
+<p id="feedback">Envie uma mensagem para receber uma dica.</p>
+</section>
+</main>
+<script>
+let started=false,count=0,streak=0,history=[];
+const chat=document.getElementById('chat');
+function add(text,who){
+const div=document.createElement('div');
+div.className='msg '+who;
+div.textContent=text;
+chat.appendChild(div);
+chat.scrollTop=chat.scrollHeight;
+}
+function start(){
+started=true;count=0;streak=0;history=[];
+chat.replaceChildren();
+document.getElementById('count').textContent='0';
+document.getElementById('score').textContent='—';
+document.getElementById('streak').textContent='0';
+document.getElementById('feedback').textContent='A conversa começou!';
+add('Oi! Como foi seu dia? 😊','bot');
+}
+document.getElementById('form').addEventListener('submit',function(e){
+e.preventDefault();
+const input=document.getElementById('message');
+const msg=input.value.trim();
+if(!msg)return;
+if(!started)started=true;
+add(msg,'me');input.value='';
+count++;streak++;
+history.push(msg);
+document.getElementById('count').textContent=count;
+document.getElementById('streak').textContent=streak;
+let score=50;
+if(msg.length>=12)score+=15;
+if(msg.includes('?'))score+=15;
+if(msg.length>=25)score+=10;
+if(/oi|olá|kkk|haha|legal|obrigado|obrigada/i.test(msg))score+=10;
+score=Math.min(score,100);
+document.getElementById('score').textContent=score;
+let tip=msg.length<5?'Tente desenvolver um pouco mais sua resposta.':
+!msg.includes('?')?'Experimente fazer uma pergunta natural para manter a conversa.':
+'Boa prática: demonstre interesse e também compartilhe algo sobre você.';
+document.getElementById('feedback').textContent=tip+' Esta é uma avaliação simples, não uma análise por IA.';
+setTimeout(()=>{
+const replies=[
+'Entendi kkk, me conta mais sobre isso!',
+'Sério? Como assim? 😄',
+'Kkkkk gostei. E o que você curte fazer no tempo livre?',
+'Ahh, entendi! Como foi isso?',
+'Legal 😊 e como você começou a gostar disso?'
+];
+add(replies[Math.floor(Math.random()*replies.length)],'bot');
+},600);
+});
+</script>
+</body>
+  </html>
+  
